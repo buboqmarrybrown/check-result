@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Semak Status Peperiksaan Pelajar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    h2, h3 {
+      color: #333;
+    }
+    .pelajar-form {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .output {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #e0f7fa;
+      border-radius: 5px;
+    }
+    .fail {
+      color: red;
+    }
+    .pass {
+      color: green;
+    }
+    .student-section {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>FORM SEMAK STATUS PEPERIKSAAN PELAJAR</h2>
+  <hr>
+
+  <label>Masukkan bilangan pelajar: </label>
+  <input type="number" id="bilPelajar" min="1">
+  <button onclick="generateForms()">Set</button>
+
+  <div id="studentsContainer" class="student-section"></div>
+
+  <script>
+    function generateForms() {
+      const container = document.getElementById("studentsContainer");
+      container.innerHTML = ""; // Clear previous
+
+      const bilPelajar = parseInt(document.getElementById("bilPelajar").value);
+
+      for (let i = 1; i <= bilPelajar; i++) {
+        const formDiv = document.createElement("div");
+        formDiv.className = "pelajar-form";
+        formDiv.innerHTML = `
+          <h3>Pelajar ${i}</h3>
+          <label>Bahasa Melayu: </label><input type="number" class="mark" name="bm"><br><br>
+          <label>Bahasa Inggeris: </label><input type="number" class="mark" name="bi"><br><br>
+          <label>Matematik: </label><input type="number" class="mark" name="math"><br><br>
+          <label>Sejarah: </label><input type="number" class="mark" name="sej"><br><br>
+          <button onclick="calculate(this)">Semak</button>
+          <div class="output"></div>
+        `;
+        container.appendChild(formDiv);
+      }
+    }
+
+    function calculate(button) {
+      const form = button.parentElement;
+      const bm = parseFloat(form.querySelector('[name="bm"]').value) || 0;
+      const bi = parseFloat(form.querySelector('[name="bi"]').value) || 0;
+      const math = parseFloat(form.querySelector('[name="math"]').value) || 0;
+      const sej = parseFloat(form.querySelector('[name="sej"]').value) || 0;
+
+      const total = bm + bi + math + sej;
+      const avg = total / 4;
+
+      let gred;
+      if (avg >= 90) gred = "A+";
+      else if (avg >= 80) gred = "A";
+      else if (avg >= 70) gred = "B";
+      else if (avg >= 60) gred = "C";
+      else if (avg >= 50) gred = "D";
+      else if (avg >= 40) gred = "E";
+      else gred = "F";
+
+      const outputDiv = form.querySelector(".output");
+
+      let result = `
+        <strong>Jumlah Markah:</strong> ${total.toFixed(2)}<br>
+        <strong>Purata Markah:</strong> ${avg.toFixed(2)}<br>
+        <strong>Gred:</strong> ${gred}<br>
+      `;
+
+      // Lulus/Gagal conditions
+      result += `<br>`;
+      result += avg > 40 ? "Purata Atas 40<br>" : "<span class='fail'>*Purata Bawah 40*</span><br>";
+      result += bm >= 40 ? "Bahasa Melayu LULUS<br>" : "<span class='fail'>*Bahasa Melayu GAGAL*</span><br>";
+      result += sej >= 40 ? "Sejarah LULUS<br>" : "<span class='fail'>*Sejarah GAGAL*</span><br>";
+
+      result += "<hr>";
+
+      if (avg >= 40 && bm >= 40 && sej >= 40) {
+        result += "<strong class='pass'>Status: LULUS 😁 👍</strong>";
+      } else {
+        result += "<strong class='fail'>Status: GAGAL 🤣 🫵 NOOB</strong>";
+      }
+
+      outputDiv.innerHTML = result;
+    }
+  </script>
+
+</body>
+</html>
